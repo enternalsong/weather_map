@@ -1,35 +1,10 @@
-# weather_map
+# 24小時即時雨量地圖api
+透過axios連接api獲得雨量觀測站的資料
+## 選單顯示想要看的觀測站
+透過選定不同城市，快速找到想要看的測站資訊
 
-This template should help get you started developing with Vue 3 in Vite.
+![](https://i.imgur.com/9nD2ZH0.jpg)
 
-## Recommended IDE Setup
-
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vitejs.dev/config/).
-
-## Project Setup
-
-```sh
-npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
-```
-
-### Compile and Minify for Production
-
-```sh
-npm run build
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
-```
+## 24小時雨量圖
+點選icon可以看到近期24小時的雨量資訊，以直方圖來表示
+![](https://i.imgur.com/XW6pNHk.jpg)

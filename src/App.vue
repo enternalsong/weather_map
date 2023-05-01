@@ -1,19 +1,18 @@
-
 <template>
   <div class="box">
     <main>
-      <h1 class="box-title">台灣每小時雨量測站圖</h1>
       <div class="container">
-        <InfoBox @emit-selectcity="EmitSelectCity"></InfoBox>
-        <WeatherMap :selectcity="selectcity"></WeatherMap>
+        <InfoBox @all-print="SelectAll" @emit-selectcity="EmitSelectCity" @emit-selectobs="EmitSelectObs" :obsSite="obsSite"></InfoBox>
+        <WeatherMap :allEvent="allEvent" :selectcity="selectcity" :obsSite="obsSite" :selectobs="selectobs"></WeatherMap>
       </div>
     </main>
   </div>
 </template>
 <script>
-import WeatherMap from './components/WeatherMap.vue'
-import InfoBox from './components/InfoBox.vue'
 
+import WeatherMap from './components/WeatherMap.vue';
+import InfoBox from './components/InfoBox.vue';
+import axios from 'axios';
 export default{
   components:{
     InfoBox,
@@ -21,14 +20,35 @@ export default{
   },
   data(){
     return{
-      selectcity:'臺中市'
+      selectcity:'臺中市',
+      selectobs:'',
+      obsSite:[],
+      allEvent:false,
     }
   },
   methods:{
     EmitSelectCity(city){
       this.selectcity= city;
       //console.log(this.selectcity);
-    }
+    },
+    EmitSelectObs(obs){
+      this.selectobs=obs;
+      //console.log(this.selectobs);
+    },
+    SelectAll(event){
+      this.allEvent= event;
+      //console.log(this.allEvent);
+    },
+  },
+  mounted(){
+      axios.get("https://rain0528api.herokuapp.com/").then((response)=>{
+      console.log(response.data.data);
+      this.obsSite = response.data.data;
+      //console.log(this.selectcity);
+      // this.updateMarker()
+      }).catch((error)=>{
+        console.log(error);
+      })
   }
 }
 </script>
@@ -43,6 +63,8 @@ export default{
 
 .InfoBox{
   padding-left:20px;
+  padding-right:20px;
+  margin-top:20px;
 }
 .container .InfoBox{
   width:30%;

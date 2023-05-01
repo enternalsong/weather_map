@@ -10,35 +10,66 @@ import Chart from 'chart.js/auto';
 import icon from "@/assets/images/marker-icon-2x.png";
 import iconshadow from '@/assets/images/marker-shadow.png';
 let map={};
+var greenIcon = new L.Icon({
+  iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+  iconSize: [20, 30],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41]
+});
+let blueIcon = new L.Icon({
+  iconUrl: icon,
+  shadowUrl: iconshadow,
+  iconSize: [20, 30],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [30, 30]
+  });
 export default {
   name: 'WeatherMap',
   props:{
     selectcity:{
       type:String,
     },
+    selectobs:{
+      type:String,
+    },
     message:{
       type:String,
       default:'hello world',
+    },
+    obsSite:{
+      type:Array,
+      default:()=>[],
+    },
+    allEvent:{
+      type:Boolean,
+      default:false,
     }
   },
   data(){
     return{
-    obsSite: [],
     map:{},
+    selectfor:'city',
     }  
   },
   methods: {
     updateMarker(){
       let obsrain=[]
-      let rainIcon = new L.Icon({
-          iconUrl: icon,
-          shadowUrl: iconshadow,
-          iconSize: [20, 30],
-          iconAnchor: [12, 41],
-          popupAnchor: [1, -34],
-          shadowSize: [15, 15]
-          });
-      obsrain = this.obsSite.filter((item)=>item.city===this.selectcity);
+      let rainIcon;
+      if(this.selectfor==="all"){
+        obsrain=this.obsSite;
+        rainIcon=blueIcon;
+      };
+      if(this.selectfor==="city"){
+        obsrain = this.obsSite.filter((item)=>item.city===this.selectcity);
+        rainIcon=blueIcon;
+      };
+      if(this.selectfor==="obs"){
+        obsrain = this.obsSite.filter((item)=>item.city===item.city && item.locationName===this.selectobs);
+        rainIcon=greenIcon;
+      };
       //console.log(obsrain);
       for(let i =0; i<obsrain.length;i++)
          { L.marker([obsrain[i].lat,obsrain[i].lon],{icon:rainIcon}
@@ -68,8 +99,9 @@ export default {
             }
           });
       })}
-      console.log(obsrain[0]);
-      this.penTo(obsrain[0]);
+      //console.log(obsrain[0]);
+      if(this.selectfor!=="all")
+        this.penTo(obsrain[0]);
     },
     removeMarker(){
       map.eachLayer((layer) => {
@@ -80,16 +112,33 @@ export default {
     },
     updateSelect(){
       this.removeMarker();
+      this.selectfor="city";
+      this.updateMarker();
+    },
+    updateOneObs(){
+      this.removeMarker();
+      this.selectfor="city";
+      this.updateMarker();
+      this.selectfor="obs"
       this.updateMarker();
     },
     penTo(obsite){
-      const{lat,lon} = obsite;
-      map.panTo(new L.LatLng(lat,lon));
-      
+
+      if(obsite){
+        const{lat,lon} = obsite;
+        map.panTo(new L.LatLng(lat,lon));}
     }
   },
   watch:{
-    selectcity: "updateSelect"
+    selectcity: "updateSelect",
+    selectobs: "updateOneObs",
+    obsSite: "updateMarker",
+    "allEvent": function(){
+      if(this.allEvent)
+      {this.selectfor="all";
+      this.updateMarker();}
+      else this.removeMarker();
+    }
   },
   mounted() {
     //  console.log(this.message);
@@ -100,14 +149,14 @@ export default {
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     }).addTo(map);
-      axios.get("https://rain0528api.herokuapp.com/").then((response)=>{
-      console.log(response.data.data);
-      this.obsSite = response.data.data;
-      //console.log(this.selectcity);
-      this.updateMarker()
-      }).catch((error)=>{
-        console.log(error);
-      })
+      // axios.get("https://rain0528api.herokuapp.com/").then((response)=>{
+      // console.log(response.data.data);
+      // this.obsSite = response.data.data;
+      // //console.log(this.selectcity);
+      // // this.updateMarker()
+      // }).catch((error)=>{
+      //   console.log(error);
+      // })
     },
 };
 </script>

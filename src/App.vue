@@ -1,22 +1,57 @@
-<script setup>
-import HelloWorld from './components/HelloWorld.vue'
-import WeatherMap from './components/WeatherMap.vue'
-
-</script>
 
 <template>
-  <header>
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-    </div>
-  </header>
-
-  <main>
-    <WeatherMap />
-  </main>
+  <div class="box">
+    <main>
+      <h1 class="box-title">台灣每小時雨量測站圖</h1>
+      <div class="container">
+        <InfoBox @emit-selectcity="EmitSelectCity"></InfoBox>
+        <WeatherMap :selectcity="selectcity"></WeatherMap>
+      </div>
+    </main>
+  </div>
 </template>
+<script>
+import WeatherMap from './components/WeatherMap.vue'
+import InfoBox from './components/InfoBox.vue'
 
+export default{
+  components:{
+    InfoBox,
+    WeatherMap
+  },
+  data(){
+    return{
+      selectcity:'臺中市'
+    }
+  },
+  methods:{
+    EmitSelectCity(city){
+      this.selectcity= city;
+      //console.log(this.selectcity);
+    }
+  }
+}
+</script>
 <style scoped>
+.box-title{
+  padding-left:20px;
+}
+.container{
+  width:100%;
+  display:flex;
+}
+
+.InfoBox{
+  padding-left:20px;
+}
+.container .InfoBox{
+  width:30%;
+}
+.container .mapContainer{
+  width: 70%;
+}
+
+
 header {
   line-height: 1.5;
 }
@@ -26,21 +61,4 @@ header {
   margin: 0 auto 2rem;
 }
 
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-}
 </style>
